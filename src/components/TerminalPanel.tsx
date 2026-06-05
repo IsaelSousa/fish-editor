@@ -9,27 +9,27 @@ import { X, Plus, Trash2 } from "lucide-react";
 import { useEditorStore } from "../store/useEditorStore";
 
 const TERM_THEME = {
-  background: "#1a1a1a",
-  foreground: "#cccccc",
-  cursor: "#aeafad",
-  cursorAccent: "#1a1a1a",
-  selectionBackground: "#264f7855",
-  black: "#1e1e1e",
-  red: "#cd3131",
-  green: "#0dbc79",
-  yellow: "#e5e510",
-  blue: "#2472c8",
-  magenta: "#bc3fbc",
-  cyan: "#11a8cd",
-  white: "#e5e5e5",
-  brightBlack: "#666666",
-  brightRed: "#f14c4c",
-  brightGreen: "#23d18b",
-  brightYellow: "#f5f543",
-  brightBlue: "#3b8eea",
-  brightMagenta: "#d670d6",
-  brightCyan: "#29b8db",
-  brightWhite: "#ffffff",
+  background: "#000000",
+  foreground: "#00ff41",
+  cursor: "#00ff41",
+  cursorAccent: "#000000",
+  selectionBackground: "#003a0055",
+  black: "#000000",
+  red: "#ff3300",
+  green: "#00ff41",
+  yellow: "#ffcc00",
+  blue: "#00aaff",
+  magenta: "#00ffcc",
+  cyan: "#00eeff",
+  white: "#00ff41",
+  brightBlack: "#2d7a3a",
+  brightRed: "#ff6600",
+  brightGreen: "#39ff14",
+  brightYellow: "#ffe066",
+  brightBlue: "#33ccff",
+  brightMagenta: "#66ffee",
+  brightCyan: "#66eeff",
+  brightWhite: "#7fff7f",
 };
 
 type TermInstance = {
@@ -76,7 +76,7 @@ export function TerminalPanel() {
 
     const term = new Terminal({
       theme: TERM_THEME,
-      fontFamily: "'JetBrains Mono', 'Cascadia Code', 'Cascadia Mono', Consolas, monospace",
+      fontFamily: "'Share Tech Mono', 'VT323', 'Consolas', 'Courier New', monospace",
       fontSize: 13,
       lineHeight: 1.2,
       cursorBlink: true,
@@ -207,9 +207,9 @@ export function TerminalPanel() {
   }
 
   return (
-    <div className="flex flex-col h-full bg-[#1a1a1a] overflow-hidden">
+    <div className="flex flex-col h-full bg-[#000000] overflow-hidden">
       {/* Header with tabs and actions */}
-      <div className="flex items-center h-8 bg-[#252526] border-t border-[#3e3e42] shrink-0 overflow-hidden">
+      <div className="flex items-center h-8 bg-[#050505] border-t border-[#003a00] shrink-0 overflow-hidden">
         {/* Tabs */}
         <div className="flex items-center flex-1 overflow-x-auto min-w-0">
           {tabs.map((tab) => (
@@ -218,15 +218,15 @@ export function TerminalPanel() {
               onClick={() => handleSwitchTab(tab.id)}
               className={`flex items-center justify-center gap-1.5 px-3 h-full text-sm shrink-0 group transition-colors ${
                 activeTabId === tab.id
-                  ? "text-[#cccccc] border-t border-t-[#007acc] bg-[#1a1a1a]"
-                  : "text-[#858585] hover:text-[#cccccc] hover:bg-[#2a2d2e]"
+                  ? "text-[#00ff41] border-t border-t-[#00ff41] bg-[#000000]"
+                  : "text-[#2d7a3a] hover:text-[#00ff41] hover:bg-[#001a00]"
               }`}
             >
               {tab.name}
               <span
                 role="button"
                 onClick={(e) => handleCloseTab(tab.id, e)}
-                className="opacity-0 group-hover:opacity-100 hover:text-white rounded transition-opacity"
+                className="opacity-0 group-hover:opacity-100 hover:text-[#ff3300] transition-opacity"
               >
                 <X size={10} />
               </span>
@@ -239,21 +239,21 @@ export function TerminalPanel() {
           <button
             onClick={handleNewTerminal}
             title="New Terminal"
-            className="p-1 rounded text-[#858585] hover:text-[#cccccc] hover:bg-[#2a2d2e] transition-colors"
+            className="p-1 text-[#2d7a3a] hover:text-[#00ff41] hover:bg-[#001a00] transition-colors"
           >
             <Plus size={13} />
           </button>
           <button
             onClick={handleClear}
             title="Clear Terminal"
-            className="p-1 rounded text-[#858585] hover:text-[#cccccc] hover:bg-[#2a2d2e] transition-colors"
+            className="p-1 text-[#2d7a3a] hover:text-[#00ff41] hover:bg-[#001a00] transition-colors"
           >
             <Trash2 size={13} />
           </button>
           <button
             onClick={() => setTerminalVisible(false)}
             title="Close Terminal (Ctrl+J)"
-            className="p-1 rounded text-[#858585] hover:text-[#cccccc] hover:bg-[#2a2d2e] transition-colors"
+            className="p-1 text-[#2d7a3a] hover:text-[#ff3300] hover:bg-[#1a0000] transition-colors"
           >
             <X size={13} />
           </button>

@@ -1,6 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
-import { Fish, FolderOpen, Clock } from "lucide-react";
 import { useEditorStore } from "../store/useEditorStore";
 
 export function WelcomePage() {
@@ -26,33 +25,57 @@ export function WelcomePage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center h-full bg-[#1e1e1e] select-none">
-      {/* Logo */}
-      <div className="flex flex-col items-center gap-3 mb-12">
-        <Fish size={72} className="text-[#007acc] opacity-20" strokeWidth={1} />
-        <div className="text-center">
-          <h1 className="text-[#cccccc] text-3xl font-light tracking-wide">Fish Editor</h1>
-          <p className="text-[#858585] text-sm mt-1">Open a folder to get started</p>
+    <div className="flex flex-col items-center justify-center h-full bg-black select-none overflow-hidden">
+      {/* ASCII art header */}
+      <div className="mb-8 text-center">
+        <pre
+          className="text-[#00ff41] leading-tight text-[11px]"
+          style={{
+            textShadow: '0 0 8px #00ff41, 0 0 20px rgba(0,255,65,0.3)',
+            fontFamily: "'Share Tech Mono', 'VT323', 'Consolas', 'Courier New', monospace",
+          }}
+        >
+{` _____ ___ ___ _  _   ___ ___ ___ _____ ___  ___
+|  ___|_ _/ __| || | | __|   \\_ _|_   _/ _ \\| _ \\
+| |_   | |\\__ \\ __ | | _|| |) | |  | || (_) |   /
+|_|   |___|___/_||_| |___|___/___| |_| \\___/|_|_\\`}
+        </pre>
+
+        <div className="mt-4 border border-[#003a00] px-6 py-1 inline-block">
+          <span
+            className="text-[#00ff41] text-xs tracking-widest uppercase"
+            style={{ textShadow: '0 0 6px #00ff41' }}
+          >
+            ■ SYSTEM ONLINE ■ v1.0.0 ■ ALL SYSTEMS GO ■
+          </span>
         </div>
       </div>
 
-      {/* Open folder button */}
-      <button
-        onClick={handleOpenFolder}
-        className="flex items-center gap-2 px-5 py-2.5 bg-[#007acc] hover:bg-[#0098ff] text-white text-sm rounded transition-colors mb-10"
-      >
-        <FolderOpen size={16} />
-        Open Folder
-      </button>
+      {/* Terminal prompt */}
+      <div className="flex flex-col items-center gap-3 mb-10">
+        <div className="text-[#2d7a3a] text-xs font-mono">
+          root@fish-editor:~$ <span className="text-[#00ff41]">_</span>
+        </div>
+        <button
+          onClick={handleOpenFolder}
+          className="border border-[#00ff41] px-8 py-2 text-[#00ff41] text-xs uppercase tracking-widest transition-all hover:bg-[#001a00]"
+          style={{
+            textShadow: '0 0 6px #00ff41',
+            boxShadow: '0 0 10px rgba(0,255,65,0.25), inset 0 0 10px rgba(0,255,65,0.05)',
+            fontFamily: "'Share Tech Mono', 'Consolas', monospace",
+          }}
+        >
+          &gt; OPEN_WORKSPACE
+        </button>
+      </div>
 
       {/* Recent folders */}
       {recentFolders.length > 0 && (
-        <div className="w-full max-w-sm">
-          <div className="flex items-center gap-2 mb-3 px-1">
-            <Clock size={12} className="text-[#858585]" />
-            <span className="text-[#858585] text-xs uppercase tracking-widest">Recent</span>
+        <div className="w-full max-w-md border border-[#003a00] p-3" style={{ boxShadow: '0 0 8px rgba(0,255,65,0.1)' }}>
+          <div className="text-[#2d7a3a] text-xs uppercase tracking-widest mb-3 pb-1 border-b border-[#001a00]">
+            // RECENT ACCESS LOG
           </div>
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-0.5">
             {recentFolders.map((folderPath) => {
               const name = folderPath.split(/[/\\]/).pop() ?? folderPath;
               return (
@@ -60,14 +83,17 @@ export function WelcomePage() {
                   key={folderPath}
                   onClick={() => openFolder(folderPath)}
                   title={folderPath}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded text-left hover:bg-[#2a2d2e] transition-colors group w-full"
+                  className="flex items-center gap-2 px-2 py-1 text-left hover:bg-[#001a00] transition-colors group w-full"
                 >
-                  <FolderOpen size={15} className="text-[#e8c100] flex-shrink-0" />
+                  <span className="text-[#2d7a3a] text-xs flex-shrink-0">&gt;</span>
                   <div className="flex flex-col min-w-0">
-                    <span className="text-[#cccccc] text-sm truncate">{name}</span>
-                    <span className="text-[#858585] text-xs truncate group-hover:text-[#6e6e6e]">
-                      {folderPath}
+                    <span
+                      className="text-[#00ff41] text-xs truncate group-hover:underline"
+                      style={{ textShadow: '0 0 4px rgba(0,255,65,0.4)' }}
+                    >
+                      {name}
                     </span>
+                    <span className="text-[#1a4a25] text-[10px] truncate">{folderPath}</span>
                   </div>
                 </button>
               );
@@ -77,9 +103,19 @@ export function WelcomePage() {
       )}
 
       {/* Keyboard hints */}
-      <div className="absolute bottom-8 flex items-center gap-6 text-[#555555] text-xs">
-        <span><kbd className="bg-[#2d2d2d] text-[#858585] px-1.5 py-0.5 rounded text-xs">Ctrl+Shift+P</kbd> Command Palette</span>
-        <span><kbd className="bg-[#2d2d2d] text-[#858585] px-1.5 py-0.5 rounded text-xs">Ctrl+J</kbd> Terminal</span>
+      <div className="absolute bottom-6 flex items-center gap-6 text-[#1a4a25] text-xs">
+        <span>
+          <kbd className="border border-[#003a00] text-[#2d7a3a] px-1.5 py-0.5 text-xs">
+            Ctrl+Shift+P
+          </kbd>{" "}
+          Command Palette
+        </span>
+        <span>
+          <kbd className="border border-[#003a00] text-[#2d7a3a] px-1.5 py-0.5 text-xs">
+            Ctrl+J
+          </kbd>{" "}
+          Terminal
+        </span>
       </div>
     </div>
   );

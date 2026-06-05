@@ -73,7 +73,7 @@ function FileNode({ entry, depth, onRefresh }: FileNodeProps) {
     <>
       <div
         style={{ paddingLeft }}
-        className="flex items-center gap-1 h-6 cursor-pointer hover:bg-[#2a2d2e] group relative pr-2"
+        className="flex items-center gap-1 h-6 cursor-pointer hover:bg-[#001a00] group relative pr-2"
         onClick={handleClick}
         onContextMenu={(e) => {
           e.preventDefault();
@@ -81,7 +81,7 @@ function FileNode({ entry, depth, onRefresh }: FileNodeProps) {
         }}
       >
         {entry.is_dir ? (
-          <span className="text-[#858585] w-3 flex-shrink-0">
+          <span className="text-[#2d7a3a] w-3 flex-shrink-0">
             {isExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
           </span>
         ) : (
@@ -93,7 +93,7 @@ function FileNode({ entry, depth, onRefresh }: FileNodeProps) {
         {renaming ? (
           <input
             autoFocus
-            className="flex-1 bg-[#3c3c3c] text-[#cccccc] text-xs px-1 outline-none border border-[#007acc] rounded"
+            className="flex-1 bg-[#001a00] text-[#00ff41] text-xs px-1 outline-none border border-[#00ff41]"
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             onBlur={handleRename}
@@ -104,7 +104,9 @@ function FileNode({ entry, depth, onRefresh }: FileNodeProps) {
             onClick={(e) => e.stopPropagation()}
           />
         ) : (
-          <span className="text-[#cccccc] truncate flex-1" style={{ fontSize: settings.fileTreeFontSize }}>{entry.name}</span>
+          <span className="text-[#00ff41] truncate flex-1" style={{ fontSize: settings.fileTreeFontSize }}>
+            {entry.name}
+          </span>
         )}
       </div>
 
@@ -128,17 +130,17 @@ function FileNode({ entry, depth, onRefresh }: FileNodeProps) {
             onClick={() => setContextMenu(null)}
           />
           <div
-            className="fixed z-50 bg-[#252526] border border-[#3e3e42] rounded shadow-xl py-1 min-w-[160px]"
-            style={{ left: contextMenu.x, top: contextMenu.y }}
+            className="fixed z-50 bg-[#000000] border border-[#003a00] py-1 min-w-[160px]"
+            style={{ left: contextMenu.x, top: contextMenu.y, boxShadow: '0 0 12px rgba(0,255,65,0.2)' }}
           >
             <button
-              className="w-full text-left px-3 py-1 text-xs text-[#cccccc] hover:bg-[#094771] flex items-center gap-2"
+              className="w-full text-left px-3 py-1 text-xs text-[#00ff41] hover:bg-[#001a00] flex items-center gap-2"
               onClick={() => { setRenaming(true); setContextMenu(null); }}
             >
               Rename
             </button>
             <button
-              className="w-full text-left px-3 py-1 text-xs text-[#f44747] hover:bg-[#094771] flex items-center gap-2"
+              className="w-full text-left px-3 py-1 text-xs text-[#ff3300] hover:bg-[#001a00] flex items-center gap-2"
               onClick={handleDelete}
             >
               <Trash2 size={12} /> Delete
@@ -180,29 +182,29 @@ export function FileTree() {
   return (
     <div className="flex flex-col h-full" style={{ width: sidebarWidth }}>
       {/* Header */}
-      <div className="flex items-center justify-between px-3 py-1.5 border-b border-[#3e3e42]">
-        <span className="text-[#bbbbbb] text-xs font-semibold uppercase tracking-wider truncate ml-4">
+      <div className="flex items-center justify-between px-3 py-1.5 border-b border-[#003a00]">
+        <span className="text-[#00ff41] text-xs font-semibold uppercase tracking-wider truncate ml-4" style={{ textShadow: '0 0 4px rgba(0,255,65,0.4)' }}>
           {workspacePath!.split(/[/\\]/).pop()}
         </span>
         <div className="flex items-center gap-1">
           <button
             onClick={() => setCreating("file")}
             title="New File"
-            className="p-1 rounded text-[#858585] hover:text-[#cccccc] hover:bg-[#2a2d2e]"
+            className="p-1 text-[#2d7a3a] hover:text-[#00ff41] hover:bg-[#001a00]"
           >
             <FilePlus size={settings.headerIconSize} style={{ margin: '4px' }} />
           </button>
           <button
             onClick={() => setCreating("dir")}
             title="New Folder"
-            className="p-1 rounded text-[#858585] hover:text-[#cccccc] hover:bg-[#2a2d2e]"
+            className="p-1 text-[#2d7a3a] hover:text-[#00ff41] hover:bg-[#001a00]"
           >
             <FolderPlus size={settings.headerIconSize} style={{ margin: '4px' }} />
           </button>
           <button
             onClick={refresh}
             title="Refresh"
-            className="p-1 rounded text-[#858585] hover:text-[#cccccc] hover:bg-[#2a2d2e]"
+            className="p-1 text-[#2d7a3a] hover:text-[#00ff41] hover:bg-[#001a00]"
           >
             <RefreshCw size={settings.headerIconSize} style={{ margin: '4px' }} />
           </button>
@@ -211,11 +213,11 @@ export function FileTree() {
 
       {/* New item input */}
       {creating && (
-        <div className="px-3 py-1.5 border-b border-[#3e3e42]">
+        <div className="px-3 py-1.5 border-b border-[#003a00]">
           <input
             autoFocus
             placeholder={creating === "file" ? "filename.ext" : "folder name"}
-            className="w-full bg-[#3c3c3c] text-[#cccccc] text-xs px-2 py-1 outline-none border border-[#007acc] rounded"
+            className="w-full bg-[#001a00] text-[#00ff41] text-xs px-2 py-1 outline-none border border-[#00ff41] placeholder-[#2d7a3a]"
             value={newItemName}
             onChange={(e) => setNewItemName(e.target.value)}
             onKeyDown={(e) => {

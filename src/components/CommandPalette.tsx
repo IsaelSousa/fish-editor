@@ -191,23 +191,27 @@ export function CommandPalette() {
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh]">
       <div
-        className="absolute inset-0 bg-black/50"
+        className="absolute inset-0 bg-black/70"
         onClick={() => setCommandPaletteOpen(false)}
       />
-      <div className="relative w-[600px] max-w-[90vw] bg-[#252526] border border-[#3e3e42] rounded-lg shadow-2xl overflow-hidden">
+      <div
+        className="relative w-[600px] max-w-[90vw] bg-[#000000] border border-[#003a00] overflow-hidden"
+        style={{ boxShadow: '0 0 30px rgba(0,255,65,0.15), 0 0 60px rgba(0,0,0,0.8)' }}
+      >
         {/* Input */}
-        <div className="flex items-center px-4 py-3 border-b border-[#3e3e42]">
-          <Search size={16} className="text-[#858585] mr-3 flex-shrink-0" />
+        <div className="flex items-center px-4 py-3 border-b border-[#003a00]">
+          <Search size={16} className="text-[#2d7a3a] mr-3 flex-shrink-0" />
           <input
             ref={inputRef}
-            className="flex-1 bg-transparent text-[#cccccc] text-sm outline-none placeholder-[#858585]"
+            className="flex-1 bg-transparent text-[#00ff41] text-sm outline-none placeholder-[#2d7a3a]"
+            style={{ textShadow: '0 0 4px rgba(0,255,65,0.4)', caretColor: '#00ff41' }}
             placeholder="Search files or type '>' for commands..."
             value={query}
             onChange={(e) => { setQuery(e.target.value); setSelected(0); }}
             onKeyDown={handleKeyDown}
           />
           {query && (
-            <button onClick={() => setQuery("")} className="text-[#858585] hover:text-[#cccccc]">
+            <button onClick={() => setQuery("")} className="text-[#2d7a3a] hover:text-[#00ff41]">
               <X size={14} />
             </button>
           )}
@@ -217,7 +221,7 @@ export function CommandPalette() {
         <div className="max-h-[400px] overflow-y-auto">
           {isCommandMode ? (
             filteredCommands.length === 0 ? (
-              <div className="px-4 py-6 text-center text-[#858585] text-sm">
+              <div className="px-4 py-6 text-center text-[#2d7a3a] text-sm">
                 No commands found
               </div>
             ) : (
@@ -225,16 +229,16 @@ export function CommandPalette() {
                 <div
                   key={cmd.id}
                   className={`flex items-center gap-3 px-4 py-2.5 cursor-pointer ${
-                    i === selected ? "bg-[#094771]" : "hover:bg-[#2a2d2e]"
+                    i === selected ? "bg-[#003300]" : "hover:bg-[#001a00]"
                   }`}
                   onClick={cmd.action}
                   onMouseEnter={() => setSelected(i)}
                 >
-                  <span className="text-[#858585]">{cmd.icon}</span>
+                  <span className="text-[#2d7a3a]">{cmd.icon}</span>
                   <div>
-                    <div className="text-[#cccccc] text-sm">{cmd.label}</div>
+                    <div className="text-[#00ff41] text-sm">{cmd.label}</div>
                     {cmd.description && (
-                      <div className="text-[#858585] text-xs">{cmd.description}</div>
+                      <div className="text-[#2d7a3a] text-xs">{cmd.description}</div>
                     )}
                   </div>
                 </div>
@@ -245,37 +249,37 @@ export function CommandPalette() {
               <div
                 key={entry.path}
                 className={`flex items-center gap-3 px-4 py-2.5 cursor-pointer ${
-                  i === selected ? "bg-[#094771]" : "hover:bg-[#2a2d2e]"
+                  i === selected ? "bg-[#003300]" : "hover:bg-[#001a00]"
                 }`}
                 onClick={() => openFile(entry)}
                 onMouseEnter={() => setSelected(i)}
               >
-                <File size={14} className="text-[#858585] flex-shrink-0" />
+                <File size={14} className="text-[#2d7a3a] flex-shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <div className="text-[#cccccc] text-sm truncate">{entry.name}</div>
-                  <div className="text-[#858585] text-xs truncate">{entry.path}</div>
+                  <div className="text-[#00ff41] text-sm truncate">{entry.name}</div>
+                  <div className="text-[#1a4a25] text-xs truncate">{entry.path}</div>
                 </div>
               </div>
             ))
           ) : (
             <>
-              <div className="px-4 py-1.5 text-[#858585] text-xs uppercase tracking-wider font-semibold">
-                Commands
+              <div className="px-4 py-1.5 text-[#2d7a3a] text-xs uppercase tracking-wider font-semibold">
+                // Commands
               </div>
               {commands.map((cmd, i) => (
                 <div
                   key={cmd.id}
                   className={`flex items-center gap-3 px-4 py-2.5 cursor-pointer ${
-                    i === selected ? "bg-[#094771]" : "hover:bg-[#2a2d2e]"
+                    i === selected ? "bg-[#003300]" : "hover:bg-[#001a00]"
                   }`}
                   onClick={cmd.action}
                   onMouseEnter={() => setSelected(i)}
                 >
-                  <span className="text-[#858585]">{cmd.icon}</span>
+                  <span className="text-[#2d7a3a]">{cmd.icon}</span>
                   <div>
-                    <div className="text-[#cccccc] text-sm">{cmd.label}</div>
+                    <div className="text-[#00ff41] text-sm">{cmd.label}</div>
                     {cmd.description && (
-                      <div className="text-[#858585] text-xs">{cmd.description}</div>
+                      <div className="text-[#2d7a3a] text-xs">{cmd.description}</div>
                     )}
                   </div>
                 </div>
@@ -284,12 +288,12 @@ export function CommandPalette() {
           )}
         </div>
 
-        {/* Footer hint */}
-        <div className="px-4 py-2 border-t border-[#3e3e42] flex items-center gap-4 text-[#858585] text-xs">
-          <span><kbd className="bg-[#3c3c3c] px-1 rounded">↑↓</kbd> Navigate</span>
-          <span><kbd className="bg-[#3c3c3c] px-1 rounded">Enter</kbd> Select</span>
-          <span><kbd className="bg-[#3c3c3c] px-1 rounded">Esc</kbd> Close</span>
-          <span className="ml-auto">Type <kbd className="bg-[#3c3c3c] px-1 rounded">&gt;</kbd> for commands</span>
+        {/* Footer */}
+        <div className="px-4 py-2 border-t border-[#003a00] flex items-center gap-4 text-[#2d7a3a] text-xs">
+          <span><kbd className="border border-[#003a00] px-1">↑↓</kbd> Navigate</span>
+          <span><kbd className="border border-[#003a00] px-1">Enter</kbd> Select</span>
+          <span><kbd className="border border-[#003a00] px-1">Esc</kbd> Close</span>
+          <span className="ml-auto">Type <kbd className="border border-[#003a00] px-1">&gt;</kbd> for commands</span>
         </div>
       </div>
     </div>

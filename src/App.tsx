@@ -134,28 +134,26 @@ export default function App() {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen bg-[#1e1e1e] overflow-hidden">
+    <div className="flex flex-col h-screen bg-black overflow-hidden">
       <TitleBar />
+      {workspacePath && <ActivityBar activePanel={activePanel} setActivePanel={setActivePanel} />}
 
       {!workspacePath ? (
         <WelcomePage />
       ) : (
         <div className="flex flex-1 overflow-hidden">
-          {/* Activity Bar */}
-          <ActivityBar activePanel={activePanel} setActivePanel={setActivePanel} />
-
           {/* Sidebar */}
           {sidebarVisible && (
             <div
-              className="flex flex-col bg-[#252526] border-r border-[#3e3e42] overflow-hidden shrink-0"
+              className="flex flex-col bg-[#050505] border-r border-[#003a00] overflow-hidden shrink-0"
               style={{ width: sidebarWidth }}
             >
               {activePanel === "explorer" && <FileTree />}
               {activePanel === "search" && <SearchPanel />}
               {activePanel === "extensions" && (
-                <div className="flex flex-col items-center justify-center h-full text-[#858585] text-xs px-4 gap-3">
-                  <span className="text-4xl opacity-20">📦</span>
-                  <p className="text-center">Extensions coming soon</p>
+                <div className="flex flex-col items-center justify-center h-full text-[#2d7a3a] text-xs px-4 gap-3">
+                  <span className="text-4xl opacity-20">■</span>
+                  <p className="text-center uppercase tracking-widest">Extensions coming soon</p>
                 </div>
               )}
             </div>
@@ -165,7 +163,7 @@ export default function App() {
           {sidebarVisible && (
             <div
               onMouseDown={onSidebarMouseDown}
-              className="w-[3px] bg-transparent hover:bg-[#007acc] cursor-ew-resize transition-colors shrink-0"
+              className="w-[2px] bg-transparent hover:bg-[#00ff41] cursor-ew-resize transition-colors shrink-0"
             />
           )}
 
@@ -173,7 +171,7 @@ export default function App() {
           <div className="flex flex-col flex-1 overflow-hidden">
             <TabBar />
 
-            {/* Editor area — shrinks when terminal is open */}
+            {/* Editor area */}
             <div className="flex-1 overflow-hidden min-h-0">
               {settingsOpen ? <SettingsPanel /> : <Editor />}
             </div>
@@ -182,14 +180,14 @@ export default function App() {
             {terminalVisible && (
               <div
                 onMouseDown={onTerminalMouseDown}
-                className="h-[3px] bg-transparent hover:bg-[#007acc] cursor-ns-resize transition-colors shrink-0"
+                className="h-[2px] bg-transparent hover:bg-[#00ff41] cursor-ns-resize transition-colors shrink-0"
               />
             )}
 
             {/* Terminal panel */}
             {terminalVisible && (
               <div
-                className="shrink-0 overflow-hidden border-t border-[#3e3e42]"
+                className="shrink-0 overflow-hidden border-t border-[#003a00]"
                 style={{ height: terminalHeight }}
               >
                 <TerminalPanel />

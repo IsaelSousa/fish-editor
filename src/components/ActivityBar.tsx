@@ -26,27 +26,32 @@ export function ActivityBar({ activePanel, setActivePanel }: ActivityBarProps) {
   }
 
   const items = [
-    { id: "explorer" as Panel, icon: <Files size={22} />, title: "Explorer" },
-    { id: "search" as Panel, icon: <Search size={22} />, title: "Search" },
-    { id: "extensions" as Panel, icon: <Package size={22} />, title: "Extensions" },
+    { id: "explorer" as Panel, icon: <Files size={16} />, title: "Explorer" },
+    { id: "search" as Panel, icon: <Search size={16} />, title: "Search" },
+    { id: "extensions" as Panel, icon: <Package size={16} />, title: "Extensions" },
   ];
 
   return (
-    <div className="flex flex-col items-center w-12 bg-[#333333] border-r border-[#3e3e42] shrink-0 py-1">
+    <div className="flex flex-row items-center h-9 bg-[#030303] border-b border-[#003a00] shrink-0 w-full gap-1" style={{ paddingLeft: '12px', paddingRight: '12px' }}>
       {items.map((item) => (
         <button
           key={item.id}
           title={item.title}
           onClick={() => handleClick(item.id)}
           className={`
-            w-12 h-12 flex items-center justify-center transition-colors relative
+            h-9 px-4 flex items-center justify-center gap-1.5 transition-colors relative text-xs
             ${activePanel === item.id && sidebarVisible && !settingsOpen
-              ? "text-[#cccccc] before:absolute before:left-0 before:top-2 before:bottom-2 before:w-0.5 before:bg-[#007acc]"
-              : "text-[#858585] hover:text-[#cccccc]"
+              ? "text-[#00ff41] after:absolute after:bottom-0 after:left-2 after:right-2 after:h-[2px] after:bg-[#00ff41]"
+              : "text-[#2d7a3a] hover:text-[#00ff41]"
             }
           `}
+          style={activePanel === item.id && sidebarVisible && !settingsOpen
+            ? { filter: 'drop-shadow(0 0 4px #00ff41)', paddingLeft: '8px', paddingRight: '8px' }
+            : undefined
+          }
         >
           {item.icon}
+          <span className="uppercase tracking-wider">{item.title}</span>
         </button>
       ))}
 
@@ -56,14 +61,16 @@ export function ActivityBar({ activePanel, setActivePanel }: ActivityBarProps) {
         title="Settings"
         onClick={handleSettings}
         className={`
-          w-12 h-12 flex items-center justify-center transition-colors relative
+          h-9 px-4 flex items-center justify-center gap-1.5 transition-colors relative text-xs
           ${settingsOpen
-            ? "text-[#cccccc] before:absolute before:left-0 before:top-2 before:bottom-2 before:w-0.5 before:bg-[#007acc]"
-            : "text-[#858585] hover:text-[#cccccc]"
+            ? "text-[#00ff41] after:absolute after:bottom-0 after:left-2 after:right-2 after:h-[2px] after:bg-[#00ff41]"
+            : "text-[#2d7a3a] hover:text-[#00ff41]"
           }
         `}
+        style={settingsOpen ? { filter: 'drop-shadow(0 0 4px #00ff41)' } : undefined}
       >
-        <Settings size={22} />
+        <Settings size={16} />
+        <span className="uppercase tracking-wider">Settings</span>
       </button>
     </div>
   );

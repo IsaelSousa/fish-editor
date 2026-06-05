@@ -10,10 +10,10 @@ interface RowProps {
 
 function Row({ label, description, children }: RowProps) {
   return (
-    <div className="flex items-center justify-between py-3 border-b border-[#3e3e42]">
+    <div className="flex items-center justify-between py-3 border-b border-[#003a00]">
       <div className="flex-1 pr-8">
-        <p className="text-[#cccccc] text-sm">{label}</p>
-        {description && <p className="text-[#858585] text-xs mt-0.5">{description}</p>}
+        <p className="text-[#00ff41] text-sm">{label}</p>
+        {description && <p className="text-[#2d7a3a] text-xs mt-0.5">{description}</p>}
       </div>
       <div className="flex-shrink-0">{children}</div>
     </div>
@@ -41,7 +41,8 @@ function NumberInput({
         const v = parseInt(e.target.value, 10);
         if (!isNaN(v) && v >= min && v <= max) onChange(v);
       }}
-      className="w-20 bg-[#3c3c3c] text-[#cccccc] text-sm px-2 py-1 rounded border border-[#555] outline-none focus:border-[#007acc] text-center"
+      className="w-20 bg-[#001a00] text-[#00ff41] text-sm px-2 py-1 border border-[#003a00] outline-none focus:border-[#00ff41] text-center"
+      style={{ caretColor: '#00ff41' }}
     />
   );
 }
@@ -61,7 +62,8 @@ function TextInput({
       value={value}
       placeholder={placeholder}
       onChange={(e) => onChange(e.target.value)}
-      className="w-64 bg-[#3c3c3c] text-[#cccccc] text-sm px-2 py-1 rounded border border-[#555] outline-none focus:border-[#007acc]"
+      className="w-64 bg-[#001a00] text-[#00ff41] text-sm px-2 py-1 border border-[#003a00] outline-none focus:border-[#00ff41] placeholder-[#2d7a3a]"
+      style={{ caretColor: '#00ff41' }}
     />
   );
 }
@@ -73,13 +75,14 @@ function ColorInput({ value, onChange }: { value: string; onChange: (v: string) 
         type="color"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-8 h-8 rounded cursor-pointer border border-[#555] bg-transparent"
+        className="w-8 h-8 cursor-pointer border border-[#003a00] bg-transparent"
       />
       <input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-24 bg-[#3c3c3c] text-[#cccccc] text-sm px-2 py-1 rounded border border-[#555] outline-none focus:border-[#007acc]"
+        className="w-24 bg-[#001a00] text-[#00ff41] text-sm px-2 py-1 border border-[#003a00] outline-none focus:border-[#00ff41]"
+        style={{ caretColor: '#00ff41' }}
       />
     </div>
   );
@@ -98,10 +101,10 @@ function SelectInput<T extends string>({
     <select
       value={value}
       onChange={(e) => onChange(e.target.value as T)}
-      className="bg-[#3c3c3c] text-[#cccccc] text-sm px-2 py-1 rounded border border-[#555] outline-none focus:border-[#007acc]"
+      className="bg-[#001a00] text-[#00ff41] text-sm px-2 py-1 border border-[#003a00] outline-none focus:border-[#00ff41]"
     >
       {options.map((o) => (
-        <option key={o.value} value={o.value}>
+        <option key={o.value} value={o.value} style={{ background: '#000', color: '#00ff41' }}>
           {o.label}
         </option>
       ))}
@@ -113,14 +116,17 @@ function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) =>
   return (
     <button
       onClick={() => onChange(!value)}
-      className={`w-10 h-5 rounded-full transition-colors relative ${
-        value ? "bg-[#007acc]" : "bg-[#555]"
+      className={`w-10 h-5 transition-colors relative border ${
+        value ? "bg-[#003300] border-[#00ff41]" : "bg-[#000] border-[#003a00]"
       }`}
     >
       <span
-        className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${
-          value ? "translate-x-5" : "translate-x-0.5"
+        className={`absolute top-0.5 w-4 h-4 transition-transform ${
+          value
+            ? "translate-x-5 bg-[#00ff41]"
+            : "translate-x-0.5 bg-[#2d7a3a]"
         }`}
+        style={value ? { boxShadow: '0 0 6px #00ff41' } : undefined}
       />
     </button>
   );
@@ -128,8 +134,8 @@ function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) =>
 
 function Section({ title }: { title: string }) {
   return (
-    <h2 className="text-[#007acc] text-xs font-semibold uppercase tracking-widest mt-6 mb-1">
-      {title}
+    <h2 className="text-[#00ff41] text-xs font-semibold uppercase tracking-widest mt-6 mb-1" style={{ textShadow: '0 0 4px rgba(0,255,65,0.5)' }}>
+      // {title}
     </h2>
   );
 }
@@ -142,13 +148,15 @@ export function SettingsPanel() {
   }
 
   return (
-    <div className="flex flex-col h-full bg-[#1e1e1e] overflow-hidden">
+    <div className="flex flex-col h-full bg-[#000000] overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-3 border-b border-[#3e3e42] shrink-0">
-        <h1 className="text-[#cccccc] text-base font-semibold">Settings</h1>
+      <div className="flex items-center justify-between px-6 py-3 border-b border-[#003a00] shrink-0">
+        <h1 className="text-[#00ff41] text-base font-semibold uppercase tracking-widest" style={{ textShadow: '0 0 6px #00ff41' }}>
+          [ Settings ]
+        </h1>
         <button
           onClick={() => setSettingsOpen(false)}
-          className="text-[#858585] hover:text-[#cccccc] hover:bg-[#2a2d2e] p-1 rounded transition-colors"
+          className="text-[#2d7a3a] hover:text-[#ff3300] hover:bg-[#1a0000] p-1 transition-colors"
         >
           <X size={16} />
         </button>

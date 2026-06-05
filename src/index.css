@@ -1,26 +1,28 @@
 @import "tailwindcss";
 
 :root {
-  --bg-primary: #1e1e1e;
-  --bg-secondary: #252526;
-  --bg-tertiary: #2d2d30;
-  --bg-active: #094771;
-  --bg-hover: #2a2d2e;
-  --border: #3e3e42;
-  --text-primary: #cccccc;
-  --text-secondary: #858585;
-  --text-active: #ffffff;
-  --accent: #007acc;
-  --accent-hover: #1a85cf;
-  --error: #f44747;
-  --warning: #ff8c00;
-  --success: #4ec9b0;
-  --tab-active: #1e1e1e;
-  --tab-inactive: #2d2d30;
+  --bg-primary: #000000;
+  --bg-secondary: #050505;
+  --bg-tertiary: #080808;
+  --bg-active: #003300;
+  --bg-hover: #001a00;
+  --border: #003a00;
+  --text-primary: #00ff41;
+  --text-secondary: #2d7a3a;
+  --text-active: #7fff7f;
+  --accent: #00ff41;
+  --accent-hover: #39ff14;
+  --error: #ff3300;
+  --warning: #ffcc00;
+  --success: #00ff41;
+  --tab-active: #000000;
+  --tab-inactive: #080808;
   --sidebar-width: 280px;
   --statusbar-height: 22px;
   --titlebar-height: 30px;
   --tab-height: 35px;
+  --glow: 0 0 8px #00ff41, 0 0 20px rgba(0, 255, 65, 0.3);
+  --glow-dim: 0 0 4px rgba(0, 255, 65, 0.5);
 }
 
 * {
@@ -35,29 +37,75 @@ body,
   height: 100%;
   width: 100%;
   overflow: hidden;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  background-color: #000000;
+  color: #00ff41;
+  font-family: 'Share Tech Mono', 'VT323', 'Consolas', 'Courier New', monospace;
   font-size: 13px;
   line-height: 1.5;
 }
 
+/* CRT scanlines overlay */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9998;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.07) 2px,
+    rgba(0, 0, 0, 0.07) 4px
+  );
+}
+
+/* CRT vignette */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9997;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0, 0, 0, 0.4) 100%);
+}
+
+/* Subtle CRT flicker */
+@keyframes flicker {
+  0%, 90%, 100% { opacity: 1; }
+  92% { opacity: 0.98; }
+  94% { opacity: 1; }
+  96% { opacity: 0.96; }
+  98% { opacity: 1; }
+}
+
+#root {
+  animation: flicker 10s infinite;
+}
+
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: #000000;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #424242;
-  border-radius: 4px;
+  background: #003a00;
+  border-radius: 0;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: #00ff41;
+  box-shadow: 0 0 4px #00ff41;
 }
 
 .no-select {
@@ -67,4 +115,15 @@ body,
 
 .monaco-editor {
   padding-top: 4px;
+}
+
+/* Blinking cursor */
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+/* Phosphor glow utility */
+.glow {
+  text-shadow: 0 0 6px #00ff41, 0 0 12px rgba(0, 255, 65, 0.4);
 }
