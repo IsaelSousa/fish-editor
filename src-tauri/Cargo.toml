@@ -1,0 +1,24 @@
+[package]
+name = "fish-editor"
+version = "0.1.0"
+description = "Fish Editor - A modern code editor"
+authors = ["Fish Editor"]
+edition = "2021"
+
+[lib]
+name = "tauri_app_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-opener = "2"
+tauri-plugin-dialog = "2"
+tauri-plugin-fs = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+walkdir = "2"
+portable-pty = "0.8"
+once_cell = "1"

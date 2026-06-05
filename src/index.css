@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+:root {
+  --bg-primary: #1e1e1e;
+  --bg-secondary: #252526;
+  --bg-tertiary: #2d2d30;
+  --bg-active: #094771;
+  --bg-hover: #2a2d2e;
+  --border: #3e3e42;
+  --text-primary: #cccccc;
+  --text-secondary: #858585;
+  --text-active: #ffffff;
+  --accent: #007acc;
+  --accent-hover: #1a85cf;
+  --error: #f44747;
+  --warning: #ff8c00;
+  --success: #4ec9b0;
+  --tab-active: #1e1e1e;
+  --tab-inactive: #2d2d30;
+  --sidebar-width: 280px;
+  --statusbar-height: 22px;
+  --titlebar-height: 30px;
+  --tab-height: 35px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #424242;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.no-select {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.monaco-editor {
+  padding-top: 4px;
+}
