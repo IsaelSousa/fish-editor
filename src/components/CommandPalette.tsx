@@ -211,7 +211,7 @@ export function CommandPalette() {
             onKeyDown={handleKeyDown}
           />
           {query && (
-            <button onClick={() => setQuery("")} className="text-[#2d7a3a] hover:text-[#00ff41]">
+            <button onClick={() => setQuery("")} className="text-[#2d7a3a] hover:text-[#00ff41] cursor-pointer">
               <X size={14} />
             </button>
           )}

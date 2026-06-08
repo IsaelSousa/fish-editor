@@ -42,7 +42,7 @@ type TermInstance = {
 type TermTab = { id: number; name: string };
 
 export function TerminalPanel() {
-  const { setTerminalVisible, terminalHeight } = useEditorStore();
+  const { setTerminalVisible, terminalHeight, workspacePath } = useEditorStore();
 
   const [tabs, setTabs] = useState<TermTab[]>([]);
   const [activeTabId, setActiveTabId] = useState<number | null>(null);
@@ -96,7 +96,7 @@ export function TerminalPanel() {
 
     let ptyId: number;
     try {
-      ptyId = await invoke<number>("create_pty", { cols: term.cols, rows: term.rows });
+      ptyId = await invoke<number>("create_pty", { cols: term.cols, rows: term.rows, cwd: workspacePath ?? null });
     } catch (e) {
       term.writeln(`\x1b[31mFailed to create terminal: ${e}\x1b[0m`);
       return;
@@ -165,8 +165,7 @@ export function TerminalPanel() {
 
   function handleNewTerminal() {
     const id = ++tabIdCounter.current;
-    const name = `Terminal ${id}`;
-    setTabs((prev) => [...prev, { id, name }]);
+    setTabs((prev) => [...prev, { id, name: `Terminal ${prev.length + 1}` }]);
     setActiveTabId(id);
   }
 
@@ -216,7 +215,7 @@ export function TerminalPanel() {
             <button
               key={tab.id}
               onClick={() => handleSwitchTab(tab.id)}
-              className={`flex items-center justify-center gap-1.5 px-3 h-full text-sm shrink-0 group transition-colors ${
+              className={`flex items-center justify-center gap-1.5 px-3 h-full text-sm shrink-0 group transition-colors cursor-pointer ${
                 activeTabId === tab.id
                   ? "text-[#00ff41] border-t border-t-[#00ff41] bg-[#000000]"
                   : "text-[#2d7a3a] hover:text-[#00ff41] hover:bg-[#001a00]"
@@ -239,21 +238,21 @@ export function TerminalPanel() {
           <button
             onClick={handleNewTerminal}
             title="New Terminal"
-            className="p-1 text-[#2d7a3a] hover:text-[#00ff41] hover:bg-[#001a00] transition-colors"
+            className="p-1 text-[#2d7a3a] hover:text-[#00ff41] hover:bg-[#001a00] transition-colors cursor-pointer"
           >
             <Plus size={13} />
           </button>
           <button
             onClick={handleClear}
             title="Clear Terminal"
-            className="p-1 text-[#2d7a3a] hover:text-[#00ff41] hover:bg-[#001a00] transition-colors"
+            className="p-1 text-[#2d7a3a] hover:text-[#00ff41] hover:bg-[#001a00] transition-colors cursor-pointer"
           >
             <Trash2 size={13} />
           </button>
           <button
             onClick={() => setTerminalVisible(false)}
             title="Close Terminal (Ctrl+J)"
-            className="p-1 text-[#2d7a3a] hover:text-[#ff3300] hover:bg-[#1a0000] transition-colors"
+            className="p-1 text-[#2d7a3a] hover:text-[#ff3300] hover:bg-[#1a0000] transition-colors cursor-pointer"
           >
             <X size={13} />
           </button>

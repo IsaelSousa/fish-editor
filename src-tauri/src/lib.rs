@@ -10,6 +10,29 @@ use std::sync::Mutex;
 use tauri::{AppHandle, Emitter};
 use walkdir::WalkDir;
 
+fn run_git(args: &[&str], dir: &Path) -> Result<String, String> {
+    let mut cmd = std::process::Command::new("git");
+    cmd.args(args)
+        .current_dir(dir)
+        .stdin(std::process::Stdio::null())
+        .stdout(std::process::Stdio::piped())
+        .stderr(std::process::Stdio::piped());
+
+    #[cfg(target_os = "windows")]
+    {
+        use std::os::windows::process::CommandExt;
+        cmd.creation_flags(0x08000000); // CREATE_NO_WINDOW
+    }
+
+    let output = cmd.output().map_err(|e| e.to_string())?;
+
+    if !output.status.success() {
+        return Err(String::from_utf8_lossy(&output.stderr).to_string());
+    }
+
+    Ok(String::from_utf8_lossy(&output.stdout).to_string())
+}
+
 struct PtySession {
     writer: Box<dyn Write + Send>,
     master: Box<dyn portable_pty::MasterPty + Send>,
@@ -21,7 +44,7 @@ static PTY_SESSIONS: Lazy<Mutex<HashMap<u32, PtySession>>> =
 static NEXT_PTY_ID: AtomicU32 = AtomicU32::new(1);
 
 #[tauri::command]
-fn create_pty(app: AppHandle, cols: u16, rows: u16) -> Result<u32, String> {
+fn create_pty(app: AppHandle, cols: u16, rows: u16, cwd: Option<String>) -> Result<u32, String> {
     let pty_system = native_pty_system();
 
     let pair = pty_system
@@ -41,6 +64,11 @@ fn create_pty(app: AppHandle, cols: u16, rows: u16) -> Result<u32, String> {
     let mut cmd = CommandBuilder::new(&shell);
     cmd.env("TERM", "xterm-256color");
     cmd.env("COLORTERM", "truecolor");
+    if let Some(dir) = cwd {
+        if Path::new(&dir).exists() {
+            cmd.cwd(dir);
+        }
+    }
 
     pair.slave
         .spawn_command(cmd)
@@ -299,6 +327,141 @@ fn search_files(root: String, query: String) -> Result<Vec<FileEntry>, String> {
     Ok(results)
 }
 
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct GitCommit {
+    pub hash: String,
+    pub short_hash: String,
+    pub message: String,
+    pub author: String,
+    pub time: String,
+    pub refs: Vec<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct GitLogEntry {
+    pub graph_line: String,
+    pub commit: Option<GitCommit>,
+}
+
+#[tauri::command]
+fn get_git_log(path: String) -> Result<Vec<GitLogEntry>, String> {
+    let git_dir = Path::new(&path).join(".git");
+    if !git_dir.exists() {
+        return Err("Not a git repository".to_string());
+    }
+
+    let sep = "|||";
+    let format_str = format!(
+        "GITCOMMIT{}%H{}%h{}%s{}%an{}%ar{}%D",
+        sep, sep, sep, sep, sep, sep
+    );
+    let pretty_arg = format!("--pretty=format:{}", format_str);
+
+    let raw = run_git(
+        &["log", "--graph", &pretty_arg, "--all", "--color=never", "-60"],
+        Path::new(&path),
+    )?;
+
+    let log_output = raw;
+    let marker = "GITCOMMIT|||";
+    let mut entries = Vec::new();
+
+    for line in log_output.as_str().lines() {
+        if let Some(commit_pos) = line.find(marker) {
+            let graph_part = line[..commit_pos].to_string();
+            let data_part = &line[commit_pos + marker.len()..];
+            let parts: Vec<&str> = data_part.splitn(6, "|||").collect();
+
+            if parts.len() >= 6 {
+                let refs: Vec<String> = parts[5]
+                    .split(", ")
+                    .filter(|r| !r.is_empty())
+                    .map(|r| r.trim().to_string())
+                    .collect();
+
+                entries.push(GitLogEntry {
+                    graph_line: graph_part,
+                    commit: Some(GitCommit {
+                        hash: parts[0].to_string(),
+                        short_hash: parts[1].to_string(),
+                        message: parts[2].to_string(),
+                        author: parts[3].to_string(),
+                        time: parts[4].to_string(),
+                        refs,
+                    }),
+                });
+            }
+        } else {
+            entries.push(GitLogEntry {
+                graph_line: line.to_string(),
+                commit: None,
+            });
+        }
+    }
+
+    Ok(entries)
+}
+
+#[tauri::command]
+fn get_git_branch(path: String) -> Result<String, String> {
+    let git_dir = Path::new(&path).join(".git");
+    if !git_dir.exists() {
+        return Err("Not a git repository".to_string());
+    }
+
+    let output = run_git(&["branch", "--show-current"], Path::new(&path))?;
+    Ok(output.trim().to_string())
+}
+
+#[tauri::command]
+fn get_git_status(path: String) -> Result<Vec<String>, String> {
+    let git_dir = Path::new(&path).join(".git");
+    if !git_dir.exists() {
+        return Err("Not a git repository".to_string());
+    }
+
+    let output = run_git(&["status", "--short"], Path::new(&path))?;
+    let lines: Vec<String> = output.lines().map(|l| l.to_string()).collect();
+    Ok(lines)
+}
+
+#[tauri::command]
+fn get_git_diff(path: String, file: String, status: String) -> Result<String, String> {
+    let git_dir = Path::new(&path).join(".git");
+    if !git_dir.exists() {
+        return Err("Not a git repository".to_string());
+    }
+
+    let xy = status.trim();
+
+    if xy == "??" {
+        let file_path = Path::new(&path).join(&file);
+        let content = std::fs::read_to_string(&file_path).map_err(|e| e.to_string())?;
+        let line_count = content.lines().count();
+        let body: String = content
+            .lines()
+            .map(|l| format!("+{}", l))
+            .collect::<Vec<_>>()
+            .join("\n");
+        return Ok(format!(
+            "--- /dev/null\n+++ b/{}\n@@ -0,0 +1,{} @@\n{}",
+            file, line_count, body
+        ));
+    }
+
+    // Working tree (unstaged) diff
+    let diff = run_git(&["diff", "--no-color", "--", &file], Path::new(&path))?;
+    if !diff.is_empty() {
+        return Ok(diff);
+    }
+
+    // Staged diff
+    run_git(
+        &["diff", "--cached", "--no-color", "--", &file],
+        Path::new(&path),
+    )
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -320,6 +483,10 @@ pub fn run() {
             write_to_pty,
             resize_pty,
             kill_pty,
+            get_git_log,
+            get_git_branch,
+            get_git_status,
+            get_git_diff,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

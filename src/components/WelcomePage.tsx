@@ -58,7 +58,7 @@ export function WelcomePage() {
         </div>
         <button
           onClick={handleOpenFolder}
-          className="border border-[#00ff41] px-8 py-2 text-[#00ff41] text-xs uppercase tracking-widest transition-all hover:bg-[#001a00]"
+          className="border border-[#00ff41] px-8 py-2 text-[#00ff41] text-xs uppercase tracking-widest transition-all hover:bg-[#001a00] cursor-pointer"
           style={{
             textShadow: '0 0 6px #00ff41',
             boxShadow: '0 0 10px rgba(0,255,65,0.25), inset 0 0 10px rgba(0,255,65,0.05)',
@@ -83,7 +83,7 @@ export function WelcomePage() {
                   key={folderPath}
                   onClick={() => openFolder(folderPath)}
                   title={folderPath}
-                  className="flex items-center gap-2 px-2 py-1 text-left hover:bg-[#001a00] transition-colors group w-full"
+                  className="flex items-center gap-2 px-2 py-1 text-left hover:bg-[#001a00] transition-colors group w-full cursor-pointer"
                 >
                   <span className="text-[#2d7a3a] text-xs flex-shrink-0">&gt;</span>
                   <div className="flex flex-col min-w-0">

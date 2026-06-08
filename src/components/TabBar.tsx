@@ -8,7 +8,7 @@ export function TabBar() {
   if (tabs.length === 0) return null;
 
   return (
-    <div className="flex items-end overflow-x-auto bg-[#080808] border-b border-[#003a00] shrink-0 h-[35px]">
+    <div className="flex items-end overflow-x-auto bg-[#080808] border-b border-[#003a00] shrink-0 h-[38px]">
       {tabs.map((tab) => {
         const isActive = tab.id === activeTabId;
         const fakeEntry = {
@@ -23,7 +23,7 @@ export function TabBar() {
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`
-              flex items-center gap-1.5 px-3 h-[35px] cursor-pointer border-r border-[#003a00]
+              flex items-center gap-1.5 px-3 h-[38px] cursor-pointer border-r border-[#003a00]
               min-w-[100px] max-w-[200px] shrink-0 group relative
               ${isActive
                 ? "bg-[#000000] text-[#00ff41] border-t-2 border-t-[#00ff41]"

@@ -9,7 +9,7 @@ export function StatusBar() {
 
   return (
     <div
-      className="flex items-center justify-between h-[22px] bg-[#000000] border-t border-[#003a00] mr-2 text-[#00ff41] text-[11px] shrink-0 select-none"
+      className="flex items-center justify-between h-[26px] bg-[#000000] border-t border-[#003a00] mr-2 text-[#00ff41] text-xs shrink-0 select-none"
       style={{ textShadow: '0 0 4px rgba(0,255,65,0.6)', boxShadow: '0 -1px 0 #001a00', paddingLeft: '12px', paddingRight: '16px' }}
     >
       <div className="flex items-center gap-3">

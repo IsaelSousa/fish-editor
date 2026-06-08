@@ -32,7 +32,7 @@ export function SearchPanel() {
   return (
     <div className="flex flex-col h-full" style={{ width: sidebarWidth }}>
       <div className="px-3 py-2 border-b border-[#003a00]">
-        <span className="text-[#00ff41] text-xs font-semibold uppercase tracking-wider" style={{ textShadow: '0 0 4px rgba(0,255,65,0.4)', paddingLeft: 4, paddingRight: 4 }}>
+        <span className="text-[#00ff41] text-sm font-semibold uppercase tracking-wider" style={{ textShadow: '0 0 4px rgba(0,255,65,0.4)', paddingLeft: 4, paddingRight: 4 }}>
           Search
         </span>
       </div>
@@ -52,10 +52,10 @@ export function SearchPanel() {
 
       <div className="flex-1 overflow-y-auto">
         {searching && (
-          <div className="px-3 py-2 text-[#2d7a3a] text-xs">Scanning...</div>
+          <div className="px-3 py-2 text-[#2d7a3a] text-sm">Scanning...</div>
         )}
         {!searching && results.length === 0 && query && (
-          <div className="px-3 py-2 text-[#2d7a3a] text-xs">No results found.</div>
+          <div className="px-3 py-2 text-[#2d7a3a] text-sm">No results found.</div>
         )}
         {results.map((entry) => (
           <div
@@ -65,7 +65,7 @@ export function SearchPanel() {
           >
             <File size={13} className="text-[#2d7a3a] flex-shrink-0" />
             <div className="flex-1 min-w-0">
-              <div className="text-[#00ff41] text-xs truncate">{entry.name}</div>
+              <div className="text-[#00ff41] text-sm truncate">{entry.name}</div>
               <div className="text-[#1a4a25] text-[10px] truncate">
                 {entry.path.replace(workspacePath || "", ".")}
               </div>

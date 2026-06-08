@@ -11,10 +11,11 @@ import { CommandPalette } from "./components/CommandPalette";
 import { TerminalPanel } from "./components/TerminalPanel";
 import { SettingsPanel } from "./components/SettingsPanel";
 import { WelcomePage } from "./components/WelcomePage";
+import { GitPanel } from "./components/GitPanel";
 import { useEditorStore } from "./store/useEditorStore";
 import { invoke } from "@tauri-apps/api/core";
 
-type Panel = "explorer" | "search" | "extensions";
+type Panel = "explorer" | "search" | "git" | "extensions";
 
 export default function App() {
   const [activePanel, setActivePanel] = useState<Panel>("explorer");
@@ -169,11 +170,16 @@ export default function App() {
 
           {/* Main area: editor + terminal */}
           <div className="flex flex-col flex-1 overflow-hidden">
-            <TabBar />
+            {activePanel !== "git" && !settingsOpen && <TabBar />}
 
             {/* Editor area */}
             <div className="flex-1 overflow-hidden min-h-0">
-              {settingsOpen ? <SettingsPanel /> : <Editor />}
+              {settingsOpen
+                ? <SettingsPanel />
+                : activePanel === "git"
+                  ? <GitPanel />
+                  : <Editor />
+              }
             </div>
 
             {/* Terminal resize handle */}

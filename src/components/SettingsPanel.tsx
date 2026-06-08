@@ -116,7 +116,7 @@ function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) =>
   return (
     <button
       onClick={() => onChange(!value)}
-      className={`w-10 h-5 transition-colors relative border ${
+      className={`w-10 h-5 transition-colors relative border cursor-pointer ${
         value ? "bg-[#003300] border-[#00ff41]" : "bg-[#000] border-[#003a00]"
       }`}
     >
@@ -156,7 +156,7 @@ export function SettingsPanel() {
         </h1>
         <button
           onClick={() => setSettingsOpen(false)}
-          className="text-[#2d7a3a] hover:text-[#ff3300] hover:bg-[#1a0000] p-1 transition-colors"
+          className="text-[#2d7a3a] hover:text-[#ff3300] hover:bg-[#1a0000] p-1 transition-colors cursor-pointer"
         >
           <X size={16} />
         </button>
