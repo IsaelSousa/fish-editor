@@ -56,7 +56,7 @@ function buildFishDarkTheme(fontColor: string) {
 }
 
 export function Editor() {
-  const { tabs, activeTabId, updateTabContent, settings } = useEditorStore();
+  const { tabs, activeTabId, updateTabContent, settings, gotoLine, setGotoLine } = useEditorStore();
 
   const editorRef = useRef<any>(null);
   const monacoRef = useRef<any>(null);
@@ -123,6 +123,14 @@ export function Editor() {
     monacoRef.current.editor.defineTheme("fish-dark", buildFishDarkTheme(settings.fontColor));
     monacoRef.current.editor.setTheme("fish-dark");
   }, [settings.fontColor]);
+
+  useEffect(() => {
+    if (gotoLine === null || !editorRef.current) return;
+    editorRef.current.revealLineInCenter(gotoLine);
+    editorRef.current.setPosition({ lineNumber: gotoLine, column: 1 });
+    editorRef.current.focus();
+    setGotoLine(null);
+  }, [gotoLine, activeTabId]);
 
   if (activeTab?.isImage) {
     return (

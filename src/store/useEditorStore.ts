@@ -35,6 +35,8 @@ interface EditorStore {
   setCommandPaletteOpen: (open: boolean) => void;
   setSearchQuery: (q: string) => void;
   closeAllTabs: () => void;
+  gotoLine: number | null;
+  setGotoLine: (line: number | null) => void;
   setTerminalVisible: (v: boolean) => void;
   setTerminalHeight: (h: number) => void;
   setSettingsOpen: (open: boolean) => void;
@@ -70,6 +72,7 @@ export const useEditorStore = create<EditorStore>()(
       sidebarWidth: 260,
       commandPaletteOpen: false,
       searchQuery: "",
+      gotoLine: null,
       terminalVisible: false,
       terminalHeight: 220,
       recentFolders: [],
@@ -168,6 +171,7 @@ export const useEditorStore = create<EditorStore>()(
       setCommandPaletteOpen: (open) => set({ commandPaletteOpen: open }),
       setSearchQuery: (q) => set({ searchQuery: q }),
       closeAllTabs: () => set({ tabs: [], activeTabId: null }),
+      setGotoLine: (line) => set({ gotoLine: line }),
       setTerminalVisible: (v) => set({ terminalVisible: v }),
       setTerminalHeight: (h) => set({ terminalHeight: h }),
       setSettingsOpen: (open) => set({ settingsOpen: open }),
