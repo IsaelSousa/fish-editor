@@ -14,6 +14,27 @@ function buildFishDarkTheme(fontColor: string) {
       { token: "string", foreground: "ce9178" },
       { token: "number", foreground: "b5cea8" },
       { token: "type", foreground: "4ec9b0" },
+
+      // HTML / JSX tags
+      { token: "tag", foreground: "00ccff" },
+      { token: "tag.html", foreground: "00ccff" },
+      { token: "tag.tsx", foreground: "00ccff" },
+      { token: "tag.jsx", foreground: "00ccff" },
+      { token: "metatag", foreground: "00ccff" },
+      { token: "metatag.html", foreground: "00ccff" },
+
+      // < > /> delimiters
+      { token: "delimiter.html", foreground: "2d7a3a" },
+      { token: "delimiter.tsx", foreground: "2d7a3a" },
+      { token: "delimiter.jsx", foreground: "2d7a3a" },
+
+      // attributes
+      { token: "attribute.name", foreground: "00ff99" },
+      { token: "attribute.name.html", foreground: "00ff99" },
+      { token: "attribute.name.tsx", foreground: "00ff99" },
+      { token: "attribute.name.jsx", foreground: "00ff99" },
+      { token: "attribute.value", foreground: "ce9178" },
+      { token: "attribute.value.html", foreground: "ce9178" },
     ],
     colors: {
       "editor.background": "#1e1e1e",
@@ -79,6 +100,17 @@ export function Editor() {
         noSyntaxValidation: false,
       });
 
+      const tsCompilerOptions = {
+        jsx: monaco.languages.typescript.JsxEmit.ReactJSX,
+        allowJs: true,
+        allowSyntheticDefaultImports: true,
+        esModuleInterop: true,
+        target: monaco.languages.typescript.ScriptTarget.ESNext,
+        moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+      };
+      monaco.languages.typescript.typescriptDefaults.setCompilerOptions(tsCompilerOptions);
+      monaco.languages.typescript.javascriptDefaults.setCompilerOptions(tsCompilerOptions);
+
       const { fontColor } = useEditorStore.getState().settings;
       monaco.editor.defineTheme("fish-dark", buildFishDarkTheme(fontColor));
       monaco.editor.setTheme("fish-dark");
@@ -112,10 +144,10 @@ export function Editor() {
   return (
     <div className="h-full overflow-hidden">
       <MonacoEditor
-        key={activeTab.id}
+        path={activeTab.path}
         height="100%"
         language={activeTab.language}
-        value={activeTab.content}
+        defaultValue={activeTab.content}
         onMount={handleMount}
         onChange={(value) => {
           if (value !== undefined) {

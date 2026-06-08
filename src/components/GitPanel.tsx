@@ -373,19 +373,19 @@ export function GitPanel() {
             <table className="w-full border-collapse font-mono text-sm">
               <thead>
                 <tr className="border-b border-[#001a00]">
-                  <th className="text-left px-4 py-1 text-[#1a4a25] text-xs uppercase tracking-widest font-normal w-px whitespace-nowrap">
+                  <th className="text-left px-4 py-1 text-[#1a4a25] text-xs uppercase tracking-widest font-normal w-px whitespace-nowrap" style={{ paddingLeft: 12 }}>
                     Graph
                   </th>
-                  <th className="text-left px-2 py-1 text-[#1a4a25] text-xs uppercase tracking-widest font-normal w-px whitespace-nowrap">
+                  <th className="text-left px-2 py-1 text-[#1a4a25] text-xs uppercase tracking-widest font-normal w-px whitespace-nowrap" style={{ paddingRight: 12 }}>
                     Hash
                   </th>
-                  <th className="text-left px-2 py-1 text-[#1a4a25] text-xs uppercase tracking-widest font-normal">
+                  <th className="text-left px-2 py-1 text-[#1a4a25] text-xs uppercase tracking-widest font-normal" style={{ paddingRight: 12 }}>
                     Message
                   </th>
-                  <th className="text-left px-2 py-1 text-[#1a4a25] text-xs uppercase tracking-widest font-normal w-px whitespace-nowrap">
+                  <th className="text-left px-2 py-1 text-[#1a4a25] text-xs uppercase tracking-widest font-normal w-px whitespace-nowrap" style={{ paddingRight: 12 }}>
                     Author
                   </th>
-                  <th className="text-right px-4 py-1 text-[#1a4a25] text-xs uppercase tracking-widest font-normal w-px whitespace-nowrap">
+                  <th className="text-right px-4 py-1 text-[#1a4a25] text-xs uppercase tracking-widest font-normal w-px whitespace-nowrap" style={{ paddingRight: 12 }}>
                     Time
                   </th>
                 </tr>
@@ -406,7 +406,7 @@ export function GitPanel() {
                         <td className="px-2 py-0.5 whitespace-nowrap" style={{ paddingRight: 12 }}>
                           <span className="text-[#2d7a3a]">{entry.commit.short_hash}</span>
                         </td>
-                        <td className="px-2 py-0.5 max-w-0">
+                        <td className="px-2 py-0.5 max-w-0" style={{ paddingRight: 12 }}>
                           <div className="flex items-center gap-2 flex-wrap">
                             {entry.commit.refs.map((ref, j) => (
                               <RefBadge key={j} label={ref} />
@@ -419,10 +419,10 @@ export function GitPanel() {
                             </span>
                           </div>
                         </td>
-                        <td className="px-2 py-0.5 whitespace-nowrap text-[#1a4a25]">
+                        <td className="px-2 py-0.5 whitespace-nowrap text-[#1a4a25]" style={{ paddingRight: 12 }}>
                           {entry.commit.author}
                         </td>
-                        <td className="px-4 py-0.5 whitespace-nowrap text-right text-[#1a4a25]">
+                        <td className="px-4 py-0.5 whitespace-nowrap text-right text-[#1a4a25]" style={{ paddingRight: 12 }}>
                           {entry.commit.time}
                         </td>
                       </>

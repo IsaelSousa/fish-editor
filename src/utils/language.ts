@@ -3,6 +3,7 @@ const extensionMap: Record<string, string> = {
   jsx: "javascript",
   ts: "typescript",
   tsx: "typescript",
+  // kept as "typescript" — Monaco uses the path URI to detect .tsx and enable JSX tokens
   py: "python",
   rs: "rust",
   go: "go",
