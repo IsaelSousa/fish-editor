@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { RefreshCw, X } from "lucide-react";
 import { useEditorStore } from "../store/useEditorStore";
+import { isImagePath, imageMimeType } from "../utils/imageUtils";
 
 interface GitCommit {
   hash: string;
@@ -239,6 +240,7 @@ export function GitPanel() {
   const [selectedFile, setSelectedFile] = useState<SelectedFile | null>(null);
   const [diff, setDiff] = useState("");
   const [diffLoading, setDiffLoading] = useState(false);
+  const [imageData, setImageData] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     if (!workspacePath) return;
@@ -269,14 +271,22 @@ export function GitPanel() {
       const file = line.slice(3);
       setSelectedFile({ file, status: xy });
       setDiff("");
+      setImageData(null);
       setDiffLoading(true);
       try {
-        const result = await invoke<string>("get_git_diff", {
-          path: workspacePath,
-          file,
-          status: xy,
-        });
-        setDiff(result);
+        if (isImagePath(file)) {
+          const sep = workspacePath.includes("\\") ? "\\" : "/";
+          const absPath = `${workspacePath}${sep}${file.replace(/\//g, sep)}`;
+          const b64 = await invoke<string>("read_binary_file", { path: absPath });
+          setImageData(`data:${imageMimeType(file)};base64,${b64}`);
+        } else {
+          const result = await invoke<string>("get_git_diff", {
+            path: workspacePath,
+            file,
+            status: xy,
+          });
+          setDiff(result);
+        }
       } catch (e) {
         setDiff(`error: ${e}`);
       } finally {
@@ -289,6 +299,7 @@ export function GitPanel() {
   const handleClosePanel = useCallback(() => {
     setSelectedFile(null);
     setDiff("");
+    setImageData(null);
   }, []);
 
   if (isGitRepo === false) {
@@ -440,15 +451,30 @@ export function GitPanel() {
           </div>
         </div>
 
-        {/* Right: diff panel */}
+        {/* Right: diff / image panel */}
         {selectedFile && (
           <div className="flex-1 min-w-0 overflow-hidden">
-            <DiffViewer
-              diff={diff}
-              file={selectedFile.file}
-              loading={diffLoading}
-              onClose={handleClosePanel}
-            />
+            {imageData ? (
+              <div className="flex flex-col h-full">
+                <div className="flex items-center gap-2 px-4 py-2 border-b border-[#003a00] shrink-0">
+                  <span className="text-[#2d7a3a] text-xs font-mono flex-1 truncate">{selectedFile.file}</span>
+                  <button onClick={handleClosePanel} className="text-[#2d7a3a] hover:text-[#00ff41] transition-colors">
+                    <X size={14} />
+                  </button>
+                </div>
+                <div className="flex-1 flex items-center justify-center overflow-auto p-4"
+                     style={{ backgroundImage: "repeating-conic-gradient(#111 0% 25%, #0a0a0a 0% 50%)", backgroundSize: "20px 20px" }}>
+                  <img src={imageData} alt={selectedFile.file} className="max-w-full max-h-full object-contain shadow-lg" />
+                </div>
+              </div>
+            ) : (
+              <DiffViewer
+                diff={diff}
+                file={selectedFile.file}
+                loading={diffLoading}
+                onClose={handleClosePanel}
+              />
+            )}
           </div>
         )}
       </div>

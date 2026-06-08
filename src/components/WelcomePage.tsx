@@ -103,7 +103,7 @@ export function WelcomePage() {
       )}
 
       {/* Keyboard hints */}
-      <div className="absolute bottom-6 flex items-center gap-6 text-[#1a4a25] text-xs">
+      <div className="absolute bottom-10 flex items-center gap-6 text-[#1a4a25] text-xs">
         <span>
           <kbd className="border border-[#003a00] text-[#2d7a3a] px-1.5 py-0.5 text-xs">
             Ctrl+Shift+P

@@ -24,7 +24,7 @@ interface EditorStore {
   setFileTree: (tree: FileEntry[]) => void;
   updateDirChildren: (dirPath: string, children: FileEntry[]) => void;
   toggleDir: (path: string) => void;
-  openTab: (path: string, name: string, content: string) => void;
+  openTab: (path: string, name: string, content: string, isImage?: boolean) => void;
   closeTab: (id: string) => void;
   setActiveTab: (id: string) => void;
   updateTabContent: (id: string, content: string) => void;
@@ -112,7 +112,7 @@ export const useEditorStore = create<EditorStore>()(
           return { expandedDirs: next };
         }),
 
-      openTab: (path, name, content) => {
+      openTab: (path, name, content, isImage?: boolean) => {
         const { tabs } = get();
         const existing = tabs.find((t) => t.path === path);
         if (existing) {
@@ -120,8 +120,8 @@ export const useEditorStore = create<EditorStore>()(
           return;
         }
         const id = `tab-${++tabCounter}`;
-        const language = getLanguageFromPath(path);
-        const newTab: Tab = { id, path, name, content, isDirty: false, language };
+        const language = isImage ? "plaintext" : getLanguageFromPath(path);
+        const newTab: Tab = { id, path, name, content, isDirty: false, language, isImage };
         set((state) => ({
           tabs: [...state.tabs, newTab],
           activeTabId: id,

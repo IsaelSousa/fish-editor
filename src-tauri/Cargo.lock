@@ -984,6 +984,7 @@ version = "0.1.0"
 dependencies = [
  "once_cell",
  "portable-pty",
+ "raw-window-handle",
  "serde",
  "serde_json",
  "tauri",

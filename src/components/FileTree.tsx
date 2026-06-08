@@ -1,4 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
+import { isImagePath, imageMimeType } from "../utils/imageUtils";
 import {
   ChevronRight,
   ChevronDown,
@@ -39,10 +40,16 @@ function FileNode({ entry, depth, onRefresh }: FileNodeProps) {
       }
     } else {
       try {
-        const result = await invoke<{ content: string; path: string }>("read_file", {
-          path: entry.path,
-        });
-        openTab(entry.path, entry.name, result.content);
+        if (isImagePath(entry.path)) {
+          const b64 = await invoke<string>("read_binary_file", { path: entry.path });
+          const dataUrl = `data:${imageMimeType(entry.path)};base64,${b64}`;
+          openTab(entry.path, entry.name, dataUrl, true);
+        } else {
+          const result = await invoke<{ content: string; path: string }>("read_file", {
+            path: entry.path,
+          });
+          openTab(entry.path, entry.name, result.content);
+        }
       } catch (e) {
         console.error("Failed to read file:", e);
       }

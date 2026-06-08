@@ -124,6 +124,22 @@ export function Editor() {
     monacoRef.current.editor.setTheme("fish-dark");
   }, [settings.fontColor]);
 
+  if (activeTab?.isImage) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full bg-[#1a1a1a] gap-3 select-none overflow-auto p-4"
+           style={{ backgroundImage: "repeating-conic-gradient(#222 0% 25%, #1a1a1a 0% 50%)", backgroundSize: "20px 20px" }}>
+        <img
+          src={activeTab.content}
+          alt={activeTab.name}
+          className="max-w-full max-h-full object-contain shadow-lg"
+          style={{ imageRendering: "pixelated" }}
+          onLoad={(e) => { (e.target as HTMLImageElement).style.imageRendering = "auto"; }}
+        />
+        <span className="text-[#555] text-xs font-mono mt-1">{activeTab.name}</span>
+      </div>
+    );
+  }
+
   if (!activeTab) {
     return (
       <div className="flex flex-col items-center justify-center h-full bg-[#1e1e1e] text-[#858585] gap-4">

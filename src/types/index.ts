@@ -13,6 +13,7 @@ export interface Tab {
   content: string;
   isDirty: boolean;
   language: string;
+  isImage?: boolean;
 }
 
 export interface EditorSettings {
