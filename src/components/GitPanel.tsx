@@ -1,6 +1,6 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { RefreshCw, X } from "lucide-react";
+import { RefreshCw, X, GitBranch, ChevronDown, Check } from "lucide-react";
 import { useEditorStore } from "../store/useEditorStore";
 import { isImagePath, imageMimeType } from "../utils/imageUtils";
 
@@ -241,19 +241,25 @@ export function GitPanel() {
   const [diff, setDiff] = useState("");
   const [diffLoading, setDiffLoading] = useState(false);
   const [imageData, setImageData] = useState<string | null>(null);
+  const [branches, setBranches] = useState<string[]>([]);
+  const [branchOpen, setBranchOpen] = useState(false);
+  const [switching, setSwitching] = useState(false);
+  const branchRef = useRef<HTMLDivElement>(null);
 
   const load = useCallback(async () => {
     if (!workspacePath) return;
     setLoading(true);
     try {
-      const [logData, branchData, statusData] = await Promise.all([
+      const [logData, branchData, statusData, branchList] = await Promise.all([
         invoke<GitLogEntry[]>("get_git_log", { path: workspacePath }),
         invoke<string>("get_git_branch", { path: workspacePath }),
         invoke<string[]>("get_git_status", { path: workspacePath }),
+        invoke<string[]>("list_git_branches", { path: workspacePath }),
       ]);
       setLog(logData);
       setBranch(branchData);
       setStatus(statusData);
+      setBranches(branchList);
       setIsGitRepo(true);
     } catch {
       setIsGitRepo(false);
@@ -263,6 +269,32 @@ export function GitPanel() {
   }, [workspacePath]);
 
   useEffect(() => { load(); }, [load]);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    if (!branchOpen) return;
+    function handleClick(e: MouseEvent) {
+      if (branchRef.current && !branchRef.current.contains(e.target as Node)) {
+        setBranchOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [branchOpen]);
+
+  const handleCheckout = useCallback(async (target: string) => {
+    if (!workspacePath || target === branch) { setBranchOpen(false); return; }
+    setSwitching(true);
+    setBranchOpen(false);
+    try {
+      await invoke("checkout_git_branch", { path: workspacePath, branch: target });
+      await load();
+    } catch (e) {
+      console.error("Checkout failed:", e);
+    } finally {
+      setSwitching(false);
+    }
+  }, [workspacePath, branch, load]);
 
   const handleFileClick = useCallback(
     async (line: string) => {
@@ -318,31 +350,54 @@ export function GitPanel() {
     <div className="flex flex-col h-full bg-black overflow-hidden select-none">
       {/* Header */}
       <div
-        className="flex items-center gap-4 px-6 py-2 border-b border-[#003a00] shrink-0"
+        className="flex items-center gap-3 px-4 py-2 border-b border-[#003a00] shrink-0"
         style={{ boxShadow: "0 1px 0 #001a00" }}
       >
         <span
-          className="text-[#00ff41] text-sm font-semibold uppercase tracking-widest"
+          className="text-[#00ff41] text-sm font-semibold uppercase tracking-widest shrink-0"
           style={{ textShadow: "0 0 6px #00ff41" }}
         >
-          ⎇ GIT GRAPH
+          ⎇ GIT
         </span>
-        {branch && (
-          <span
-            className="border border-[#00ff41] text-[#00ff41] text-sm px-2 py-0.5"
+
+        {/* Branch switcher */}
+        <div ref={branchRef} className="relative shrink-0">
+          <button
+            onClick={() => setBranchOpen(o => !o)}
+            disabled={switching || branches.length === 0}
+            className="flex items-center gap-1.5 border border-[#00ff41] text-[#00ff41] text-xs px-2 py-0.5 hover:bg-[#00ff4115] transition-colors disabled:opacity-40"
             style={{ textShadow: "0 0 4px #00ff41" }}
           >
-            {branch}
-          </span>
-        )}
+            <GitBranch size={11} />
+            <span className="font-mono">{switching ? "switching…" : (branch || "—")}</span>
+            <ChevronDown size={10} className={`transition-transform ${branchOpen ? "rotate-180" : ""}`} />
+          </button>
+
+          {branchOpen && (
+            <div className="absolute top-full left-0 mt-1 z-50 min-w-[160px] bg-[#0a0a0a] border border-[#003a00] shadow-lg overflow-hidden">
+              {branches.map((b) => (
+                <button
+                  key={b}
+                  onClick={() => handleCheckout(b)}
+                  className="w-full flex items-center gap-2 px-3 py-1.5 text-xs font-mono text-left hover:bg-[#001a00] transition-colors"
+                  style={{ color: b === branch ? "#00ff41" : "#2d7a3a" }}
+                >
+                  <Check size={10} className={b === branch ? "opacity-100" : "opacity-0"} />
+                  {b}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
         {modified > 0 && (
-          <span className="border border-[#ffcc00] text-[#ffcc00] text-sm px-2 py-0.5">
-            {modified} modified
+          <span className="border border-[#ffcc00] text-[#ffcc00] text-xs px-1.5 py-0.5 shrink-0">
+            {modified} mod
           </span>
         )}
         {untracked > 0 && (
-          <span className="border border-[#2d7a3a] text-[#2d7a3a] text-sm px-2 py-0.5">
-            {untracked} untracked
+          <span className="border border-[#2d7a3a] text-[#2d7a3a] text-xs px-1.5 py-0.5 shrink-0">
+            {untracked} new
           </span>
         )}
         <div className="flex-1" />
@@ -353,7 +408,6 @@ export function GitPanel() {
           className="flex items-center gap-1.5 text-[#2d7a3a] hover:text-[#00ff41] text-sm transition-colors"
         >
           <RefreshCw size={12} className={loading ? "animate-spin" : ""} />
-          <span className="uppercase tracking-wider">Refresh</span>
         </button>
       </div>
 

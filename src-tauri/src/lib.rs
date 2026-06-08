@@ -807,6 +807,33 @@ fn get_git_branch(path: String) -> Result<String, String> {
 }
 
 #[tauri::command]
+fn list_git_branches(path: String) -> Result<Vec<String>, String> {
+    let git_dir = Path::new(&path).join(".git");
+    if !git_dir.exists() {
+        return Err("Not a git repository".to_string());
+    }
+
+    let output = run_git(&["branch", "--format=%(refname:short)"], Path::new(&path))?;
+    let branches: Vec<String> = output
+        .lines()
+        .map(|l| l.trim().to_string())
+        .filter(|l| !l.is_empty())
+        .collect();
+    Ok(branches)
+}
+
+#[tauri::command]
+fn checkout_git_branch(path: String, branch: String) -> Result<(), String> {
+    let git_dir = Path::new(&path).join(".git");
+    if !git_dir.exists() {
+        return Err("Not a git repository".to_string());
+    }
+
+    run_git(&["checkout", &branch], Path::new(&path))?;
+    Ok(())
+}
+
+#[tauri::command]
 fn get_git_status(path: String) -> Result<Vec<String>, String> {
     let git_dir = Path::new(&path).join(".git");
     if !git_dir.exists() {
@@ -879,6 +906,8 @@ pub fn run() {
             kill_pty,
             get_git_log,
             get_git_branch,
+            list_git_branches,
+            checkout_git_branch,
             get_git_status,
             get_git_diff,
             detect_android_sdk,
